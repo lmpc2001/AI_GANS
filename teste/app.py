@@ -94,8 +94,6 @@ with torch.no_grad():
     # Desnormalizar os dados
     fake = fake * (df.max().unsqueeze(1) - df.min().unsqueeze(1)) + torch.tensor(df.min().values).unsqueeze(1)
 
-
-
     # Arredondar os valores
     fake[:, 2] = fake[:, 2].astype(int)
     fake[:, 4] = fake[:, 4].astype(int)
