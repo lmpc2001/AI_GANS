@@ -39,11 +39,17 @@ class cGan():
             
             g_loss = self.model.train_on_batch([noise, sampled_conditions], valid_y)
 
+            if epoch % 100 == 0:
+                print(f"\nEpoch {epoch}/{epochs} | D Loss: {d_loss[0]} | D Accuracy: {d_loss[1]} | G Loss: {g_loss}")
+           
             # Avaliação do modelo em dados de validação
-            # noise_val = np.random.normal(0, 1, (half_batch, latent_dim))
-            # sampled_conditions_val = np.random.randint(0, 2, (half_batch, condition_dim))
-            # generated_data_val = generator.predict([noise_val, sampled_conditions_val])
-            # val_loss = discriminator.evaluate([val_data, val_conditions], np.ones((val_data.shape[0], 1)), verbose=0)
+            if epoch % 100 == 0:
+                val_noise = np.random.normal(0, 1, (val_data.shape[0], latent_dim))
+                val_generated_data = generator.predict([val_noise, val_conditions])
+                val_d_loss_real = discriminator.evaluate([val_data, val_conditions], np.ones((val_data.shape[0], 1)), verbose=0)
+                val_d_loss_fake = discriminator.evaluate([val_generated_data, val_conditions], np.zeros((val_data.shape[0], 1)), verbose=0)
+                val_d_loss = 0.5 * np.add(val_d_loss_real, val_d_loss_fake)
+                print(f"Validation | D Loss: {val_d_loss[0]} | D Accuracy: {val_d_loss[1]}\n\n")
             
-            # print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss} |\n G Loss: {g_loss} |\n Val Loss: {val_loss}")
-            print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss} |\n G Loss: {g_loss}")
+            # print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss} | G Loss: {g_loss} | Val Loss: {val_loss}")
+            print(f"Epoch {epoch}/{epochs} | D Loss: {d_loss} | G Loss: {g_loss}\n")

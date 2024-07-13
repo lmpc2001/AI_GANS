@@ -21,9 +21,11 @@ data_dim = train_data.shape[1] # Número de colunas com dados numéricos
 # Montagem da cGan
 generator = Generator(latent_dim, condition_dim, data_dim).model
 discriminator = Discriminator(data_dim, condition_dim).model
-discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
+discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0004, 0.5), metrics=['accuracy'])
 
 cGan = cGan(generator, discriminator)
+cGan.model.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
+
 
 # Treino da cGan
 cGan.train(generator, 

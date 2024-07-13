@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Input, Dense, LeakyReLU, Concatenate
+from tensorflow.keras.layers import Input, Dense, LeakyReLU, Concatenate, Dropout
 from tensorflow.keras.models import Model
 
 class Discriminator():
@@ -9,10 +9,13 @@ class Discriminator():
 
         x = Dense(512)(merged_input)
         x = LeakyReLU(alpha=0.2)(x)
+        x = Dropout(0.3)(x)
         x = Dense(256)(x)
         x = LeakyReLU(alpha=0.2)(x)
+        x = Dropout(0.3)(x)
         x = Dense(128)(x)
         x = LeakyReLU(alpha=0.2)(x)
+        x = Dropout(0.3)(x)
         x = Dense(1, activation='sigmoid')(x)
 
         self.model = Model([input_data, input_condition], x)
