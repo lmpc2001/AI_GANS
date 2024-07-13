@@ -1,4 +1,4 @@
-from tensorflow.keras.layers import Input, Dense, LeakyReLU, BatchNormalization, Concatenate
+from tensorflow.keras.layers import Input, Dense, LeakyReLU, Concatenate
 from tensorflow.keras.models import Model
 
 class Discriminator():
