@@ -19,7 +19,7 @@ dim_entrada_discriminador = 9
 # Parâmetros de Treino
 lr = 0.0002
 beta1 = 0.5
-num_epocas = 50
+num_epocas = 100
 batch_size = 32
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -92,7 +92,7 @@ with torch.no_grad():
 
     print("Fake: ", fake)
     # Desnormalizar os dados
-    fake = fake * (df.max().unsqueeze(1) - df.min().unsqueeze(1)) + torch.tensor(df.min().values).unsqueeze(1)
+    fake = fake * (df.max().squeeze(1) - df.min().squeeze(1)) + torch.tensor(df.min().values).squeeze(1)
 
     # Arredondar os valores
     fake[:, 2] = fake[:, 2].astype(int)

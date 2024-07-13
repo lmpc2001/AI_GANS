@@ -1,75 +1,27 @@
-import torch
-# import pandas as pd
-
-from Generator import Generator
+import numpy as np
+from cGan import cGan
 from Discriminator import Discriminator
-from utils import load_dataset
-from configs import TRAIN_DATASET, BATCH_SIZE, LR, NUM_EPOCHS
-from PandasDataset import PandasDataset
-
-generator = Generator()
-discriminator = Discriminator()
-
-data = load_dataset(TRAIN_DATASET)
-training_set = PandasDataset(data)
+from Generator import Generator
+from tensorflow.keras.optimizers import Adam
 
 
-torch.manual_seed(111)
-
-train_loader = torch.utils.data.DataLoader(
-    training_set, batch_size=BATCH_SIZE, shuffle=True
-)
-
-loss_function = torch.nn.BCELoss()
-
-optimizer_discriminator = torch.optim.Adam(discriminator.parameters(), lr=LR)
-optimizer_generator = torch.optim.Adam(generator.parameters(), lr=LR)
+# Dados de treino (exemplo)
+data = np.random.normal(0, 1, (1000, 1))  # 1000 amostras de dados numéricos
+conditions = np.random.randint(0, 2, (1000, 10))  # 10 condições binárias
 
 
-for epoch in range(NUM_EPOCHS):
-    for n, (real_samples) in enumerate(train_loader):
-        print(n, real_samples)
-        # Data for training the discriminator
-        real_samples_labels = torch.ones((BATCH_SIZE, 1))
-        latent_space_samples = torch.randn((BATCH_SIZE, 2))
-        generated_samples = generator(latent_space_samples)
-        generated_samples_labels = torch.zeros((BATCH_SIZE, 1))
-        all_samples = torch.cat((real_samples, generated_samples))
-        all_samples_labels = torch.cat(
-            (real_samples_labels, generated_samples_labels)
-        )
+latent_dim = 100
+condition_dim = 10
+data_dim = 1
 
-        # Training the discriminator
-        discriminator.zero_grad()
-        output_discriminator = discriminator(all_samples)
-        loss_discriminator = loss_function(
-            output_discriminator, all_samples_labels
-        )
-        loss_discriminator.backward()
-        optimizer_discriminator.step()
+# Montagem da cGan
 
-        # Data for training the generator
-        latent_space_samples = torch.randn((BATCH_SIZE, 2))
+generator = Generator(latent_dim, condition_dim).model
+discriminator = Discriminator(data_dim, condition_dim).model
+discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0002, 0.5), metrics=['accuracy'])
 
-        # Training the generator
-        generator.zero_grad()
-        generated_samples = generator(latent_space_samples)
-        output_discriminator_generated = discriminator(generated_samples)
-        loss_generator = loss_function(
-            output_discriminator_generated, real_samples_labels
-        )
-        loss_generator.backward()
-        optimizer_generator.step()
+cGan = cGan(generator, discriminator)
 
-        # Show loss
-        if epoch % 10 == 0 and n == BATCH_SIZE - 1:
-            print(f"Epoch: {epoch} Loss D.: {loss_discriminator}")
-            print(f"Epoch: {epoch} Loss G.: {loss_generator}")
-        # print("HI")
-            
-latent_space_samples = torch.randn(100, 2)
-generated_samples = generator(latent_space_samples)
 
-generated_samples = generated_samples.detach()
-
-print(generated_samples)
+# Treino da cGan
+cGan.train(generator, discriminator, epochs=10000, batch_size=64, latent_dim=latent_dim, condition_dim=condition_dim, data=data, conditions=conditions)
