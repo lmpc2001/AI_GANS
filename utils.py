@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-from configs import TRAIN_DATASET
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 import pandas as pd
 
@@ -39,16 +38,11 @@ def load_dataset2(file_path):
 
 	df = df.select_dtypes(include=np.number)
 
-	# normalized_data = (df - df.min()) / (df.max() - df.min())
-
-	# normalized_data = normalized_data.fillna(0)
-
 	# Padronização
 	scaler = StandardScaler()
 	standardized_data = scaler.fit_transform(df)
 	standardized_df = pd.DataFrame(standardized_data, columns=df.columns)
 	standardized_df = standardized_df.fillna(0)
-
 
 	# Normalização
 	normalizer = MinMaxScaler()
@@ -56,14 +50,9 @@ def load_dataset2(file_path):
 	normalized_df = pd.DataFrame(normalized_data, columns=df.columns)
 	normalized_df = normalized_df.fillna(0)
 
-	normalized_df.fillna(0)
+	normalized_data_formated = normalized_df.to_numpy()
 
 	# print("Padronização:\n", standardized_df)
 	# print("Normalização:\n", normalized_df.to_numpy(dtype=np.number))
 
-	return [standardized_df, normalized_df]
-
-
-# [standardized_df, normalized_df] = load_dataset2(TRAIN_DATASET)
-
-# print(normalized_df)
+	return [standardized_df, normalized_data_formated]
