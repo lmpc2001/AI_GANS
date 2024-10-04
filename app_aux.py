@@ -10,7 +10,7 @@ from utils import load_dataset2
 conditions = np.random.randint(0, 2, (data.shape[0], 15))  # 15 condições binárias
 
 # Divisão do dataset em dados de treino e de validação
-train_data, val_data, train_conditions, val_conditions = train_test_split(data, conditions, test_size=0.2, random_state=42)
+train_data, val_data, train_conditions, val_conditions = train_test_split(data, conditions, test_size=0.2, train_size=0.7, random_state=42)
 
 
 latent_dim = 100 # Dimensão do vetor latente

@@ -12,7 +12,7 @@ from sklearn.model_selection import train_test_split
 # Gerar rótulos condicionais (ajustar conforme necessário)
 conditions = np.random.randint(0, 2, (data.shape[0], 10))  # 10 condições binárias
 
-train_data, val_data, train_conditions, val_conditions = train_test_split(data, conditions, test_size=0.2, random_state=42)
+train_data, val_data, train_conditions, val_conditions = train_test_split(data, conditions, test_size=0.3, random_state=42)
 
 latent_dim = 100 # Dimensão do vetor latente
 condition_dim = train_conditions.shape[1]  # Número de condições
@@ -21,16 +21,14 @@ data_dim = train_data.shape[1] # Número de colunas com dados numéricos
 # Montagem da cGan
 generator = Generator(latent_dim, condition_dim, data_dim).model
 discriminator = Discriminator(data_dim, condition_dim).model
-discriminator.compile(loss='binary_crossentropy', optimizer=Adam(0.0004, 0.5), metrics=['accuracy'])
+discriminator.compile(loss='mean_squared_error', optimizer=Adam(0.0004, 0.5), metrics=['mse'])
 
 cGan = cGan(generator, discriminator)
-cGan.model.compile(loss='binary_crossentropy', optimizer=Adam(0.0001, 0.5))
-
 
 # Treino da cGan
 cGan.train(generator, 
 		   discriminator, 
-		   epochs=10000, 
+		   epochs=1000, 
 		   batch_size=64, 
 		   latent_dim=latent_dim, 
 		   condition_dim=condition_dim, 

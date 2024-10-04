@@ -52,7 +52,4 @@ def load_dataset2(file_path):
 
 	normalized_data_formated = normalized_df.to_numpy()
 
-	# print("Padronização:\n", standardized_df)
-	# print("Normalização:\n", normalized_df.to_numpy(dtype=np.number))
-
 	return [standardized_df, normalized_data_formated]
